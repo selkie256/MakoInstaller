@@ -53,7 +53,7 @@ then
 	fi
 mkfs.ext4 $HOMEPART
 fi
-echo"Haben Sie eine Swap-Partition erstellt? J oder N eingeben!"
+echo "Haben Sie eine Swap-Partition erstellt? J oder N eingeben!"
 read ANSWER
 if [ $ANSWER = J ];
 then
