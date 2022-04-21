@@ -36,7 +36,7 @@ then
 	done
 fi
 mkfs.ext4 $ROOTPART
-echo"Haben Sie eine Home-Partition erstellt? J oder N eingeben!"
+echo "Haben Sie eine Home-Partition erstellt? J oder N eingeben!"
 read ANSWER
 if [ $ANSWER = "J" ];
 then
