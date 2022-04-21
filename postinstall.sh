@@ -1,16 +1,18 @@
 echo "Bitte geben Sie ihre Zeitzone an! Z. B. Europe/Berlin"
 read TIMEZONE
-if [ -b /usr/share/zoneinfo/!$TIMEZONE ];
-then
-	while [ -f /usr/share/zoneinfo/$TIMEZONE ];
-	do
+while :
+do
+	if [ -f /usr/share/zoneinfo/!$TIMEZONE ];
+	then
+		ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+		break
+	else
 		echo "Diese Zeitzone existiert nicht! Bitte geben Sie sie noch einmal ein!"
 		read TIMEZONE
-	done
-fi
-ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
+	fi
+done
 hwclock --systohc
-echo "de_DE.UTF8" >> /etc/locale.gen
+echo "de_DE.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 echo "LANG=de_DE.UTF-8" >> /etc/locale.conf
 echo "KEYMAP=de-latin1" >> /etc/vconsole.conf
@@ -24,3 +26,13 @@ grub-mkconfig -o /boot/grub/grub.cfg
 echo "Bitte geben Sie einen Benutzernamen für Ihren Benutzer ein!"
 read USERNAME
 useradd -m -G video,audio,storage,floppy,ftp,http,games,disk,kvm,network,scanner $USERNAME
+echo "Bitte geben Sie ein Passwort für $USERNAME ein!"
+passwd $USERNAME
+echo "Die Installation ist abgeschlossen!"
+echo "Wollen Sie jetzt neu starten?"
+read ANSWER
+if [ $ANSWER = "J"];
+then
+	exit
+	reboot
+fi
