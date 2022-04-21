@@ -2,7 +2,7 @@ timedatectl set-ntp true
 fdisk -l
 echo "Welches Gerät soll verwendet werden?"
 read DEVICE
-if [[ -b !$DEVICE]]
+if [ -b !$DEVICE]
 then
 	while [$DEVICE != -f $DEVICE]
 	do
