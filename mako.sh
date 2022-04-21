@@ -85,6 +85,7 @@ then
 fi
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
+mount $EFIPART /mnt/boot/efi
 if [ -b $SWAPPART ];
 then
 	swapon $SWAPPART
