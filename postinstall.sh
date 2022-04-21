@@ -2,7 +2,7 @@ echo "Bitte geben Sie ihre Zeitzone an! Z. B. Europe/Berlin"
 read TIMEZONE
 while :
 do
-	if [ -f /usr/share/zoneinfo/!$TIMEZONE ];
+	if [ -f /usr/share/zoneinfo/$TIMEZONE ];
 	then
 		ln -sf /usr/share/zoneinfo/Region/City /etc/localtime
 		break
