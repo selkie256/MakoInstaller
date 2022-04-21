@@ -5,6 +5,7 @@ read DEVICE
 while [ -b != $DEVICE ];
 do
 	if [ -b $DEVICE ];
+	then
 			fdisk $DEVICE
 	else
 		fdisk -l
