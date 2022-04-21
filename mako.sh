@@ -89,8 +89,8 @@ if [ -b $SWAPPART ];
 then
 	swapon $SWAPPART
 fi
-pacstrap /mnt base linux linux-firmware base-devel efibootmgr grub plasma-meta kde-applications libreoffice-fresh-de thunderbird vlc sddm nano sudo supertuxkart sauerbraten sauerbraten-data intel-ucode mesa wayland plasma-wayland-session kodi supertux codeblocks
+pacstrap /mnt base linux linux-firmware base-devel efibootmgr grub plasma-meta kde-applications libreoffice-fresh-de thunderbird vlc sddm nano sudo supertuxkart sauerbraten sauerbraten-data intel-ucode mesa wayland plasma-wayland-session kodi supertux codeblocks xorg gimp krita kdenlive clementine
 genfstab -U /mnt >> /mnt/etc/fstab
-cp postinstall.sh /mnt/root/postinstall.sh
+cp postinstall.sh /mnt/postinstall.sh
 chmod +x /mnt/root/postinstall.sh
 arch-chroot /mnt ./postinstall.sh
