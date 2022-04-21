@@ -2,9 +2,9 @@ timedatectl set-ntp true
 fdisk -l
 echo "Welches Gerät soll verwendet werden?"
 read DEVICE
-if [ -b !$DEVICE]:
+if [ -b !$DEVICE ];
 then
-	while [ -f !$DEVICE]:
+	while [ -f !$DEVICE ];
 	do
 		fdisk -l
 		echo "Das Gerät existiert nicht! Bitte geben Sie es noch einmal an!"
