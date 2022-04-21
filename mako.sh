@@ -31,6 +31,7 @@ done
 echo "Bitte geben Sie die Root-Partition an!"
 read ROOTPART
 while :
+do
 	if [ -b $ROOTPART ];
 	then
 		mkfs.ext4 $ROOTPART
@@ -48,6 +49,7 @@ then
 	echo "Bitte geben Sie die Home-Partition an!"
 	read HOMEPART
 	while :
+	do
 		if [ -b $HOMEPART ];
 		then
 			mkfs.ext4 $HOMEPART
@@ -65,6 +67,7 @@ then
 	echo "Bitte geben Sie die Swap-Partition an!"
 	read SWAPPART
 	while :
+	do
 		if [ -b $SWAPPART ];
 		then
 			mkswap $SWAPPART
