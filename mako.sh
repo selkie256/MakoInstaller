@@ -10,7 +10,7 @@ then
 		echo "Das Gerät existiert nicht! Bitte geben Sie es noch einmal an!"
 		read DEVICE
 	done
-else;
+else
 	fdisk $DEVICE
 fi
 echo "Bitte geben Sie die EFI-Partition an!"
