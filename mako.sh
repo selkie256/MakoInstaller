@@ -16,44 +16,47 @@ do
 done
 echo "Bitte geben Sie die EFI-Partition an-ne "
 read EFIPART
-if [ -b -ne $EFIPART ];
-then
-	while [ -b -ne $EFIPART ];
-	do
+while :
+do
+	if [ -b $EFIPART ];
+	then
+		mkfs.fat -F 32 $EFIPART
+		break
+	else
 		fdisk -l
 		echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an-ne "
 		read EFIPART
-	done
-fi
-mkfs.fat -F 32 $EFIPART
-echo "Bitte geben Sie die Root-Partition an-ne "
+	fi
+done
+echo "Bitte geben Sie die Root-Partition an!"
 read ROOTPART
-if [ -b -ne $ROOTPART ];
-then
-	while [ -b -ne $ROOTPART ];
-	do
+while :
+	if [ -b $ROOTPART ];
+	then
+		mkfs.ext4 $ROOTPART
+		break
+	else
 		fdisk -l
 		echo "Diese Partition existiert nicht!  Bitte geben Sie sie noch einmal an!"
 		read ROOTPART
-	done
-fi
-mkfs.ext4 $ROOTPART
+	fi
+done
 echo "Haben Sie eine Home-Partition erstellt? J oder N eingeben!"
 read ANSWER
 if [ $ANSWER = "J" ];
 then
 	echo "Bitte geben Sie die Home-Partition an!"
 	read HOMEPART
-	if [ -b -ne $HOMEPART ];
-	then
-		while [ -b -ne $HOMEPART ];
-		do
+	while :
+		if [ -b $HOMEPART ];
+		then
+			mkfs.ext4 $HOMEPART
+		else
 			fdisk -l
 			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
 			read HOMEPART
-		done
-	fi
-mkfs.ext4 $HOMEPART
+		fi
+	done
 fi
 echo "Haben Sie eine Swap-Partition erstellt? J oder N eingeben!"
 read ANSWER
@@ -61,16 +64,16 @@ if [ $ANSWER = J ];
 then
 	echo "Bitte geben Sie die Swap-Partition an!"
 	read SWAPPART
-	if [ -b -ne $SWAPPART ];
-	then
-		while [ -b -ne $SWAPPART ];
-		do
+	while :
+		if [ -b $SWAPPART ];
+		then
+			mkswap $SWAPPART
+		else
 			fdisk -l
 			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
 			read SWAPPART
-		done
-	fi
-	mkswap $SWAPPART
+		fi
+	done
 fi
 mount $ROOTPART /mnt
 if [ -b $HOMEPART];
