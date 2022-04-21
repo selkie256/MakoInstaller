@@ -12,6 +12,7 @@ do
 		echo "Das Gerät existiert nicht-ne  Bitte geben Sie es noch einmal an-ne "
 		read DEVICE
 	fi
+break
 done
 echo "Bitte geben Sie die EFI-Partition an-ne "
 read EFIPART
