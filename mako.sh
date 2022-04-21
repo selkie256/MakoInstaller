@@ -10,14 +10,13 @@ then
 		echo "Das Gerät existiert nicht! Bitte geben Sie es noch einmal an!"
 		read DEVICE
 	done
-else
-	fdisk $DEVICE
 fi
+fdisk $DEVICE
 echo "Bitte geben Sie die EFI-Partition an!"
 read EFIPART
-if [$EFIPART != -f $EFIPART]
+if [ -b !$EFIPART ];
 then
-	while [$EFIPART != -f $EFIPART]
+	while [ -b !$EFIPART ];
 	do
 		fdisk -l
 		echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
@@ -27,9 +26,9 @@ fi
 mkfs.fat -F 32 $EFIPART
 echo "Bitte geben Sie die Root-Partition an!"
 read ROOTPART
-if [$ROOTPART != -f $ROOTPART]
+if [ -b !$ROOTPART ];
 then
-	while [$ROOTPART != -f $ROOTPART]
+	while [ -b !$ROOTPART ];
 	do
 		fdisk -l
 		echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
@@ -39,13 +38,13 @@ fi
 mkfs.ext4 $ROOTPART
 echo"Haben Sie eine Home-Partition erstellt? J oder N eingeben!"
 read ANSWER
-if [$ANSWER = J]
+if [ $ANSWER = "J" ];
 then
 	echo "Bitte geben Sie die Home-Partition an!"
 	read HOMEPART
-	if [$HOMEPART != -f $HOMEPART]
+	if [ -b !$HOMEPART ];
 	then
-		while [$HOMEPART != -f $HOMEPART]
+		while [ -b !$HOMEPART ];
 		do
 			fdisk -l
 			echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
@@ -56,13 +55,13 @@ mkfs.ext4 $HOMEPART
 fi
 echo"Haben Sie eine Swap-Partition erstellt? J oder N eingeben!"
 read ANSWER
-if [$ANSWER = J]
+if [ $ANSWER = J ];
 then
 	echo "Bitte geben Sie die Swap-Partition an!"
 	read SWAPPART
-	if [$SWAPPART != -f $SWAPPART]
+	if [ -b !$SWAPPART ];
 	then
-		while [$SWAPPART != -f $SWAPPART]
+		while [ -b !$SWAPPART ];
 		do
 			fdisk -l
 			echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
@@ -72,13 +71,13 @@ then
 	mkswap $SWAPPART
 fi
 mount $ROOTPART /mnt
-if [$HOMEPART = -f $HOMEPART]
+if [ -b $HOMEPART];
 then
 	mkdir /mnt/home
 fi
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
-if [SWAPPART = -f $SWAPPART]
+if [ -b $SWAPPART ];
 then
 	swapon $SWAPPART
 fi
@@ -87,9 +86,9 @@ genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 echo "Bitte geben Sie ihre Zeitzone an! Z. B. Europe/Berlin"
 read TIMEZONE
-if [$TIMEZONE != -f /usr/share/zoneinfo/$TIMEZONE]
+if [ -b /usr/share/zoneinfo/!$TIMEZONE ];
 then
-	while [$TIMEZONE != -f /usr/share/zoneinfo/$TIMEZONE]
+	while [ -b /usr/share/zoneinfo/$TIMEZONE ];
 	do
 		echo "Diese Zeitzone existiert nicht! Bitte geben Sie sie noch einmal ein!"
 		read TIMEZONE
