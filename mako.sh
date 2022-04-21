@@ -4,14 +4,15 @@ echo "Welches Gerät soll verwendet werden?"
 read DEVICE
 if [ -b $DEVICE ];
 then
-	while [ -b -ne $DEVICE ];
+	fdisk $DEVICE
+else
+	while [ -b != $DEVICE ];
 	do
 		fdisk -l
 		echo "Das Gerät existiert nicht-ne  Bitte geben Sie es noch einmal an-ne "
 		read DEVICE
 	done
 fi
-fdisk $DEVICE
 echo "Bitte geben Sie die EFI-Partition an-ne "
 read EFIPART
 if [ -b -ne $EFIPART ];
