@@ -24,6 +24,8 @@ echo "Bitte geben Sie das Passwort für den Root-Benutzer ein!"
 passwd
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id="Mermaidia OS"
 grub-mkconfig -o /boot/grub/grub.cfg
+systemctl enable sddm
+systemctl enable NetworkManager
 echo "Bitte geben Sie einen Benutzernamen für Ihren Benutzer ein!"
 read USERNAME
 useradd -m -G video,audio,storage,floppy,ftp,http,games,disk,kvm,network,scanner $USERNAME
