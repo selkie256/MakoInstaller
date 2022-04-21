@@ -2,36 +2,36 @@ timedatectl set-ntp true
 fdisk -l
 echo "Welches Gerät soll verwendet werden?"
 read DEVICE
-if [ -b !$DEVICE ];
+if [ -b -ne $DEVICE ];
 then
-	while [ -b !$DEVICE ];
+	while [ -b -ne $DEVICE ];
 	do
 		fdisk -l
-		echo "Das Gerät existiert nicht! Bitte geben Sie es noch einmal an!"
+		echo "Das Gerät existiert nicht-ne  Bitte geben Sie es noch einmal an-ne "
 		read DEVICE
 	done
 fi
 fdisk $DEVICE
-echo "Bitte geben Sie die EFI-Partition an!"
+echo "Bitte geben Sie die EFI-Partition an-ne "
 read EFIPART
-if [ -b !$EFIPART ];
+if [ -b -ne $EFIPART ];
 then
-	while [ -b !$EFIPART ];
+	while [ -b -ne $EFIPART ];
 	do
 		fdisk -l
-		echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
+		echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an-ne "
 		read EFIPART
 	done
 fi
 mkfs.fat -F 32 $EFIPART
-echo "Bitte geben Sie die Root-Partition an!"
+echo "Bitte geben Sie die Root-Partition an-ne "
 read ROOTPART
-if [ -b !$ROOTPART ];
+if [ -b -ne $ROOTPART ];
 then
-	while [ -b !$ROOTPART ];
+	while [ -b -ne $ROOTPART ];
 	do
 		fdisk -l
-		echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
+		echo "Diese Partition existiert nicht!  Bitte geben Sie sie noch einmal an!"
 		read ROOTPART
 	done
 fi
@@ -42,12 +42,12 @@ if [ $ANSWER = "J" ];
 then
 	echo "Bitte geben Sie die Home-Partition an!"
 	read HOMEPART
-	if [ -b !$HOMEPART ];
+	if [ -b -ne $HOMEPART ];
 	then
-		while [ -b !$HOMEPART ];
+		while [ -b -ne $HOMEPART ];
 		do
 			fdisk -l
-			echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
+			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
 			read HOMEPART
 		done
 	fi
@@ -59,12 +59,12 @@ if [ $ANSWER = J ];
 then
 	echo "Bitte geben Sie die Swap-Partition an!"
 	read SWAPPART
-	if [ -b !$SWAPPART ];
+	if [ -b -ne $SWAPPART ];
 	then
-		while [ -b !$SWAPPART ];
+		while [ -b -ne $SWAPPART ];
 		do
 			fdisk -l
-			echo "Diese Partition existiert nicht! Bitte geben Sie sie noch einmal an!"
+			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
 			read SWAPPART
 		done
 	fi
