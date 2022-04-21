@@ -2,17 +2,17 @@ timedatectl set-ntp true
 fdisk -l
 echo "Welches Gerät soll verwendet werden?"
 read DEVICE
-while [ -b != $DEVICE ];
+while :
 do
 	if [ -b $DEVICE ];
 	then
-			fdisk $DEVICE
+		fdisk $DEVICE
+		break
 	else
 		fdisk -l
 		echo "Das Gerät existiert nicht-ne  Bitte geben Sie es noch einmal an-ne "
 		read DEVICE
 	fi
-break
 done
 echo "Bitte geben Sie die EFI-Partition an-ne "
 read EFIPART
