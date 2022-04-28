@@ -1,87 +1,119 @@
+contains_element() { #{{{
+	#check if an element exist in a string
+	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
+}                  #}}}
+#select keymap
+keymap_list=($(find /usr/share/kbd/keymaps/ -type f -printf "%f\n" | sort -V | sed 's/.map.gz//g'))
+PS3="Bitte geben Sie das Tastaturlayout ein!"
+select KEYMAP in "${keymap_list[@]}";
+do
+	if contains_element "$KEYMAP" "${keymap_list[@]}";
+	then
+		echo "$KEYMAP"
+		loadkeys $KEYMAP
+		break
+	else
+		echo "Dieses Tastatur-Layout existiert nicht!"
+		echo $KEYMAP
+	fi
+done
 timedatectl set-ntp true
-fdisk -l
-echo "Welches Gerät soll verwendet werden?"
-read DEVICE
-while :
+#create partitions
+devices_list=($(lsblk -d | awk '{print "/dev/" $1}' | grep 'sd\|hd\|vd\|nvme\|mmcblk'))
+PS3="$prompt1"
+echo -e "Attached Devices:\n"
+lsblk -lnp -I 2,3,8,9,22,34,56,57,58,65,66,67,68,69,70,71,72,91,128,129,130,131,132,133,134,135,259 | awk '{print $1,$4,$6,$7}' | column -t
+echo -e "\n"
+echo -e "Select device to partition:\n"
+select device in "${devices_list[@]}";
 do
-	if [ -b $DEVICE ];
+	if contains_element "${device}" "${devices_list[@]}";
 	then
-		fdisk $DEVICE
+		fdisk $device
 		break
 	else
-		fdisk -l
-		echo "Das Gerät existiert nicht-ne  Bitte geben Sie es noch einmal an-ne "
-		read DEVICE
+		echo "Das Gerät existiert nicht!"
 	fi
 done
-echo "Bitte geben Sie die EFI-Partition an-ne "
-read EFIPART
-while :
+#select EFI partition
+partitions_list=($(lsblk -lnp "$device" | grep 'part' | awk '{print $1}' | grep 'sd\|hd\|vd\|nvme\|mmcbl' ))
+PS3="$prompt1"
+echo -e "Verfügbare Partitionen:\n"
+lsblk -lnp "$device" | awk '{print $1,$4,$6,$7}' | column -t
+echo -e "\n"
+echo -e "Bitte wählen Sie die EFI-Partition aus"
+select EFIPART in "${partitions_list[@]}";
 do
-	if [ -b $EFIPART ];
+	if contains_element "${EFIPART}" "${partitions_list[@]}";
 	then
-		mkfs.fat -F 32 $EFIPART
-		break
+		mkfs.vfat $EFIPART
 	else
-		fdisk -l
-		echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an-ne "
-		read EFIPART
+		echo "Diese Partition existiert nicht!"
 	fi
 done
-echo "Bitte geben Sie die Root-Partition an!"
-read ROOTPART
-while :
+#select root partition
+partitions_list=($(lsblk -lnp "$device" | grep 'part' | awk '{print $1}' | grep 'sd\|hd\|vd\|nvme\|mmcbl' ))
+PS3="$prompt1"
+echo -e "Verfügbare Partitionen:\n"
+lsblk -lnp "$device" | awk '{print $1,$4,$6,$7}' | column -t
+echo -e "\n"
+echo -e "Bitte wählen Sie die Root-Partition aus"
+select ROOTPART in "${partitions_list[@]}";
 do
-	if [ -b $ROOTPART ];
+	if contains_element "${ROOTPART}" "${partitions_list[@]}";
 	then
 		mkfs.ext4 $ROOTPART
-		break
 	else
-		fdisk -l
-		echo "Diese Partition existiert nicht!  Bitte geben Sie sie noch einmal an!"
-		read ROOTPART
+		echo "Diese Partition existiert nicht!"
 	fi
 done
+#select home partition
 echo "Haben Sie eine Home-Partition erstellt? J oder N eingeben!"
 read ANSWER
 if [ $ANSWER = "J" ];
 then
-	echo "Bitte geben Sie die Home-Partition an!"
-	read HOMEPART
-	while :
+	partitions_list=($(lsblk -lnp "$device" | grep 'part' | awk '{print $1}' | grep 'sd\|hd\|vd\|nvme\|mmcbl' ))
+	PS3="$prompt1"
+	echo -e "Verfügbare Partitionen:\n"
+	lsblk -lnp "$device" | awk '{print $1,$4,$6,$7}' | column -t
+	echo -e "\n"
+	echo -e "Bitte wählen Sie die Home-Partition aus"
+	select SHOMEPART in "${partitions_list[@]}";
 	do
-		if [ -b $HOMEPART ];
+		if contains_element "${HOMEPART}" "${partitions_list[@]}";
 		then
 			mkfs.ext4 $HOMEPART
 		else
-			fdisk -l
-			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
-			read HOMEPART
+			echo "Diese Partition existiert nicht!"
 		fi
 	done
 fi
+#select swap partition
 echo "Haben Sie eine Swap-Partition erstellt? J oder N eingeben!"
 read ANSWER
 if [ $ANSWER = J ];
 then
-	echo "Bitte geben Sie die Swap-Partition an!"
-	read SWAPPART
-	while :
+	partitions_list=($(lsblk -lnp "$device" | grep 'part' | awk '{print $1}' | grep 'sd\|hd\|vd\|nvme\|mmcbl' ))
+	PS3="$prompt1"
+	echo -e "Verfügbare Partitionen:\n"
+	lsblk -lnp "$device" | awk '{print $1,$4,$6,$7}' | column -t
+	echo -e "\n"
+	echo -e "Bitte wählen Sie die Swap-Partition aus"
+	select SWAPPART in "${partitions_list[@]}";
 	do
-		if [ -b $SWAPPART ];
+		if contains_element "${SWAPPART}" "${partitions_list[@]}";
 		then
 			mkswap $SWAPPART
 		else
-			fdisk -l
-			echo "Diese Partition existiert nicht-ne  Bitte geben Sie sie noch einmal an!"
-			read SWAPPART
+			echo "Diese Partition existiert nicht!"
 		fi
 	done
-fi
+#mout partitions
 mount $ROOTPART /mnt
 if [ -b $HOMEPART];
 then
 	mkdir /mnt/home
+	mount $HOMEPART /mnt/home
 fi
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
@@ -90,8 +122,18 @@ if [ -b $SWAPPART ];
 then
 	swapon $SWAPPART
 fi
-pacstrap /mnt base linux linux-firmware base-devel efibootmgr grub plasma-meta kde-applications networkmanager atom libreoffice-fresh-de thunderbird vlc sddm nano sudo supertuxkart sauerbraten sauerbraten-data intel-ucode mesa wayland plasma-wayland-session kodi supertux codeblocks xorg gimp krita kdenlive clementine pipewire pipewire-pulse pipewire-alsa pipewire-jack
+#install base system
+pacstrap /mnt base linux linux-firmware
 genfstab -U /mnt >> /mnt/etc/fstab
+#copy post install script to new root
 cp postinstall.sh /mnt/postinstall.sh
 chmod +x /mnt/postinstall.sh
 arch-chroot /mnt ./postinstall.sh
+#reboot after chroot
+echo "Die Installation ist abgeschlossen!"
+echo "Wollen Sie jetzt neu starten?"
+read ANSWER
+if [ $ANSWER = "J"];
+then
+	reboot
+fi
